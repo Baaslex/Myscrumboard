@@ -1,8 +1,14 @@
 Myscrumboard::Application.routes.draw do
+  get "contact/index"
+
+  get "about/index"
+
   resources :stories
 
   resources :boards
-
+  match "/about" => "about#index"
+  match "/contact" => "contact#index"
+  match "/home" => "home#index"
   #get "home/index"
 	root :to => "home#index"
   # The priority is based upon order of creation:
