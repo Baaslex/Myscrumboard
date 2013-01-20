@@ -1,4 +1,8 @@
 Myscrumboard::Application.routes.draw do
+  resources :stories
+
+  resources :boards
+
   #get "home/index"
 	root :to => "home#index"
   # The priority is based upon order of creation:

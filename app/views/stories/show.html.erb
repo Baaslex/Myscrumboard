@@ -1,0 +1,35 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <b>Id:</b>
+  <%= @story.id %>
+</p>
+
+<p>
+  <b>Boardid:</b>
+  <%= @story.boardid %>
+</p>
+
+<p>
+  <b>Text:</b>
+  <%= @story.text %>
+</p>
+
+<p>
+  <b>Lane:</b>
+  <%= @story.lane %>
+</p>
+
+<p>
+  <b>Color:</b>
+  <%= @story.color %>
+</p>
+
+<p>
+  <b>Lastmodif:</b>
+  <%= @story.lastmodif %>
+</p>
+
+
+<%= link_to 'Edit', edit_story_path(@story) %> |
+<%= link_to 'Back', stories_path %>
