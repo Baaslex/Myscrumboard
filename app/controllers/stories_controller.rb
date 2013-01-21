@@ -1,4 +1,7 @@
 class StoriesController < ApplicationController
+require 'eventmachine'
+require 'faye'
+
   # GET /stories
   # GET /stories.json
   def index
@@ -60,7 +63,14 @@ class StoriesController < ApplicationController
 
     respond_to do |format|
       if @story.update_attributes(params[:story])
-        format.html { redirect_to @story, notice: 'Story was successfully updated.' }
+        
+		message = {:channel => "/boards/#{@story.boardid}", :data => { :text=>@story.to_json}}
+		uri = URI.parse("http://faye.dev-ice.com/faye")
+		
+		puts(@story.to_json)
+		Net::HTTP.post_form(uri, :message => message.to_json)
+		
+		format.html { redirect_to @story, notice: 'Story was successfully updated.' }
         format.json { head :no_content }
       else
         format.html { render action: "edit" }

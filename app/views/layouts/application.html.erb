@@ -2,14 +2,10 @@
 <html>
 	<head>
 		<title>myScrumboard.net</title>
+		<%= csrf_meta_tag %>
 		<%= stylesheet_link_tag "reset","pngfix","designer_notes","fineliner","style" %>
-		<!--<link rel="stylesheet" href="/css/reset.css" type="text/css" />
-		<link rel="stylesheet" href="/css/pngfix.css" type="text/css" />
-		<link rel="stylesheet" href="/css/designer_notes.css" type="text/css" />
-		<link rel="stylesheet" href="/css/fineliner.css" type="text/css" />
-		<link rel="stylesheet" href="/css/style.css" type="text/css" />-->
+		<%= javascript_include_tag 'jquery' %>
 		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.7.0/themes/ui-lightness/jquery-ui.css" type="text/css"/>
-		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.3/jquery.min.js" type="text/javascript"></script>
 		<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js" type="text/javascript"></script>
 		
 		<%= content_for :javascripts %>  

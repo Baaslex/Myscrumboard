@@ -1,5 +1,10 @@
+$.ajaxSetup({
+   'beforeSend': function(xhr) {           
+      var token = $("meta[name='csrf-token']").attr("content");
+  xhr.setRequestHeader("X-CSRF-Token", token);
+    }
+});
 client.subscribe('/boards/'+gon.boardid, function(message) {
-  //alert('Got a message: ' + message.text);
   var obj = $.parseJSON(message.text);
 	if(obj!=null){
 		if($("#ticket"+obj.id).length != 0){
@@ -52,19 +57,25 @@ var ticket = new Object();
 ticket.id=id.split('ticket')[1];
 ticket.text=content.current;
 ticket.lane =$(this).parent().parent().attr('id');
-ticket.color=$(this).parent().attr('class').split(' ')[-1];
-ticket.action="editStory";
-updateStory(ticket);
-$.post("http://myscrumboard.herokuapp.com/stories/"+ticket.id,{_method:"PUT",id:ticket.id,text:ticket.text,color:ticket.color,lane:ticket.lane});
-$.ajax({
-  url: "http://myscrumboard.herokuapp.com/stories/"+ticket.id,
-  type: 'PUT',
-  dataType: 'jsonp',
-  data: "id="+ticket.id+"&text="+ticket.text+"&color="+ticket.color+"&lane="+ticket.lane,
-  success: function(data) {
-    alert('Load was performed.');
-  }
-});
+ticket.color=$(this).parent().attr('class').split(' ')[1];
+//updateStory(ticket);
+var token = $("meta[name='csrf-token']").attr("content");
+//alert(token);
+//$.post("/stories/"+ticket.id,{_method:"PUT",id:ticket.id,text:ticket.text,color:ticket.color,lane:ticket.lane});
+$.ajax( {
+    url: "/stories/"+ticket.id,
+    type: 'post',
+    data: {
+        _method:"PUT",authenticity_token:token,story:ticket
+    },
+    headers: {
+        "X-CSRF-Token": token  //for object property name, use quoted notation shown in second
+    },
+    success: function( data )
+    {
+        console.info(data);
+    }
+} );
 }
 
 }
