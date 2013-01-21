@@ -95,7 +95,6 @@ $.ajax( {
     }
 } );
 }
-alert(JSON.stringify(ticket));
 }
 $.extend({
   getUrlVars: function(){
