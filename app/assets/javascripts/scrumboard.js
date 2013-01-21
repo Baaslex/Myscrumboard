@@ -8,11 +8,29 @@ client.subscribe('/boards/'+gon.boardid, function(message) {
   var obj = $.parseJSON(message.text);
 	if(obj!=null){
 		if($("#ticket"+obj.id).length != 0){
-		$("#ticket"+obj.id+" p").text(obj.text);
-		$("#ticket"+obj.id).appendTo("#"+obj.lane);
+			$("#ticket"+obj.id+" p").text(obj.text);
+			$("#ticket"+obj.id).appendTo("#"+obj.lane);
 		}
-		else{
-		$("#"+obj.lane).append($('<div class="post-it" id="ticket"><div class="window_tools"><span class="ui-icon ui-icon-minusthick">minimize</span><span class="ui-icon ui-icon-plusthick">maximize</span><span class="ui-icon ui-icon-closethick">close</span></div><p>Click to edit</p></div>').addClass(obj.color.toLowerCase()).attr("id","ticket"+obj.id));
+		else{			 
+			$("#"+obj.lane).append($('<div class="post-it" id="ticket"><div class="window_tools"><span class="ui-icon ui-icon-minusthick">minimize</span><span class="ui-icon ui-icon-plusthick">maximize</span><span class="ui-icon ui-icon-closethick">close</span></div><p>Click to edit</p></div>').addClass(obj.color.toLowerCase()).attr("id","ticket"+obj.id));
+			
+			var newTicket = $("#ticket"+obj.id);
+			alert(JSON.stringify(obj));
+
+			newTicket.children("p").editable({onSubmit:editStory,type:'textarea'});
+			
+			$(".ui-icon-closethick").click(function(e){
+				 var id = $(this).parent().parent().attr('id');
+				 $(this).parent().parent().remove();
+				//$.post("service.php",{id:id,action:"deletestory"});
+			 });
+			 $(".ui-icon-plusthick").click(function(e){
+				 $(this).parent().parent().animate({'height':"139px"});
+			 });
+			$(".ui-icon-minusthick").click(function(e){
+				 $(this).parent().parent().animate({'height':"16px"});
+			 });
+		
 		}
 	}
 });
@@ -46,7 +64,7 @@ client.publish('/boards/'+gon.boardid, {
   text: JSON.stringify(ticket)
 });
 }
-function submitStory(content){
+function editStory(content){
 if(content.current!=content.previous){
 var id = this.parent().attr('id');
 if(content.current==""){
@@ -77,7 +95,7 @@ $.ajax( {
     }
 } );
 }
-
+alert(JSON.stringify(ticket));
 }
 $.extend({
   getUrlVars: function(){
@@ -126,26 +144,34 @@ $(document).ready(setTimeout(function() {
    document.addEventListener("touchend", touchHandler, true);
    document.addEventListener("touchcancel", touchHandler, true); 
 		$("#addStory").click(function(e)
-			{
-			var id = $.getUrlVars()['id'];
-			var color = $("#colorselect").val();
-			$.post("service.php",{scrumboardid:id,color:color,action:"addStory"},function(data) {
-				 $("#take-off").append($('<div class="post-it" id="ticket"><div class="window_tools"><span class="ui-icon ui-icon-minusthick">minimize</span><span class="ui-icon ui-icon-plusthick">maximize</span><span class="ui-icon ui-icon-closethick">close</span></div><p>Click to edit</p></div>').addClass(color.toLowerCase()).attr("id","ticket"+data));
-			   $("#ticket"+data+" p").editable({onSubmit:submitStory,type:'textarea'});
-			   $(".ui-icon-closethick").click(function(e){
-			var id = $(this).parent().parent().attr('id');
-			$(this).parent().parent().remove();
-			$.post("service.php",{id:id,action:"deleteStory"});
-		});
-		$(".ui-icon-plusthick").click(function(e){
-			$(this).parent().parent().animate({'height':"139px"});
-		});
-		$(".ui-icon-minusthick").click(function(e){
-			$(this).parent().parent().animate({'height':"16px"});
-		});
+		{
+			 var id = gon.boardid;
+			 var color = $("#colorselect").val();
+			 var token = $("meta[name='csrf-token']").attr("content");
+			// $.post("service.php",{scrumboardid:id,color:color,action:"addstory"},function(data) {
+				 // $("#take-off").append($('<div class="post-it" id="ticket"><div class="window_tools"><span class="ui-icon ui-icon-minusthick">minimize</span><span class="ui-icon ui-icon-plusthick">maximize</span><span class="ui-icon ui-icon-closethick">close</span></div><p>click to edit</p></div>').addclass(color.tolowercase()).attr("id","ticket"+data));
 		
-			   });
-			});
+		var ticket = new Object();
+		ticket.boardid = id;
+		ticket.color = color.toLowerCase();
+		ticket.lane = "take-off";
+		ticket.text = "Click to edit";
+	    $.ajax({
+			url: "/stories/",
+			type: 'post',
+			data: {
+				_method:"POST",authenticity_token:token,story:ticket
+			},
+			headers: {
+				"X-CSRF-Token": token  //for object property name, use quoted notation shown in second
+			},
+			success: function( data )
+			{
+				console.info(data);
+			}
+
+		 });
+	});
 		$( "#take-off, #in-flight,#landed" ).sortable({
 			connectWith: ".column",
 			placeholder: 'ui-state-highlight',
@@ -163,7 +189,7 @@ $(document).ready(setTimeout(function() {
 			
 			}
 		}).disableSelection();
-		$(".post-it p").editable({onSubmit:submitStory,type:'textarea'});
+		$(".post-it p").editable({onSubmit:editStory,type:'textarea'});
 		$(".ui-icon-closethick").click(function(e){
 			var id = $(this).parent().parent().attr('id');
 			$(this).parent().parent().remove();

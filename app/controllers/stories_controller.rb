@@ -47,6 +47,13 @@ require 'faye'
 
     respond_to do |format|
       if @story.save
+	  
+		message = {:channel => "/boards/#{@story.boardid}", :data => { :text=>@story.to_json}}
+		uri = URI.parse("http://faye.dev-ice.com/faye")
+		
+		puts(@story.to_json)
+		Net::HTTP.post_form(uri, :message => message.to_json)
+		
         format.html { redirect_to @story, notice: 'Story was successfully created.' }
         format.json { render json: @story, status: :created, location: @story }
       else
