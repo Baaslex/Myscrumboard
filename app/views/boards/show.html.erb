@@ -1,3 +1,9 @@
+
+<% content_for :javascripts do %>
+<%= include_gon %>
+<%= javascript_include_tag "http://faye.dev-ice.com/faye.js","faye_client","editable","scrumboard" %>
+<% end %>
+
 <div id="toolbox">
 			<select id="colorselect">
 			  <option>Classic</option>

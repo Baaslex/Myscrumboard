@@ -13,6 +13,8 @@ class BoardsController < ApplicationController
   # GET /boards/1
   # GET /boards/1.json
   def show
+  @board = Board.find(params[:id])
+  gon.boardid=@board.id
   @stories = Story.findAllStoriesOfBoard(params[:id])
 	@landed = Story.findStoriesOfBoard(params[:id],"landed")
 	@in_flight = Story.findStoriesOfBoard(params[:id],"in-flight")

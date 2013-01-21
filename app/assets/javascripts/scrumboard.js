@@ -1,3 +1,16 @@
+client.subscribe('/boards/'+gon.boardid, function(message) {
+  //alert('Got a message: ' + message.text);
+  var obj = $.parseJSON(message.text);
+	if(obj!=null){
+		if($("#ticket"+obj.id).length != 0){
+		$("#ticket"+obj.id+" p").text(obj.text);
+		$("#ticket"+obj.id).appendTo("#"+obj.lane);
+		}
+		else{
+		$("#"+obj.lane).append($('<div class="post-it" id="ticket"><div class="window_tools"><span class="ui-icon ui-icon-minusthick">minimize</span><span class="ui-icon ui-icon-plusthick">maximize</span><span class="ui-icon ui-icon-closethick">close</span></div><p>Click to edit</p></div>').addClass(obj.color.toLowerCase()).attr("id","ticket"+obj.id));
+		}
+	}
+});
 function touchHandler(event)
 {
  var touches = event.changedTouches,
@@ -23,6 +36,11 @@ if( $target.hasClass('post-it') ) {
     event.preventDefault();  
 }
 }
+function updateStory(ticket){
+client.publish('/boards/'+gon.boardid, {
+  text: JSON.stringify(ticket)
+});
+}
 function submitStory(content){
 if(content.current!=content.previous){
 var id = this.parent().attr('id');
@@ -30,7 +48,14 @@ if(content.current==""){
 $(this).append("Click to edit");
 content.current="Click to edit";
 }
-$.post("service.php",{id:id,text:content.current,action:"editStory"});
+var ticket = new Object();
+ticket.id=id.split('ticket')[1];
+ticket.text=content.current;
+ticket.lane =$(this).parent().parent().attr('id');
+ticket.color=$(this).parent().attr('class').split(' ')[-1];
+ticket.action="editStory";
+updateStory(ticket);
+//$.post("service.php",{id:id,text:content.current,action:"editStory"});
 }
 
 }
@@ -62,7 +87,7 @@ var obj = $.parseJSON(data);
 		}
 	}
 var id = $.getUrlVars()['id'];
-$.ajax({
+/*$.ajax({
 			type:"GET",
 			url: "service.php?action=longpoll&id="+id,
 			success: function(data){
@@ -73,7 +98,7 @@ $.ajax({
 			},
 			async:true,
 			cache:false
-		});
+		});*/
 }
 $(document).ready(setTimeout(function() {
 		document.addEventListener("touchstart", touchHandler, true);
@@ -107,7 +132,14 @@ $(document).ready(setTimeout(function() {
 			receive: function(event, ui) {
 			var id=ui.item.attr('id');
 			var lane = ui.item.parent().attr('id');
-			$.post("service.php",{id:id,action:"moveStory",lane:lane});
+			ticket = new Object();
+			//$.post("service.php",{id:id,action:"moveStory",lane:lane});
+			ticket.id=id.split('ticket')[1];
+			ticket.text=ui.item.children("p").text();
+			ticket.lane =ui.item.parent().attr('id');
+			ticket.color=ui.item.attr('class').split(' ')[1];
+			ticket.action="moveStory";
+			updateStory(ticket);
 			}
 		}).disableSelection();
 		$(".post-it p").editable({onSubmit:submitStory,type:'textarea'});
