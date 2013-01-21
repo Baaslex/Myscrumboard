@@ -55,6 +55,16 @@ ticket.lane =$(this).parent().parent().attr('id');
 ticket.color=$(this).parent().attr('class').split(' ')[-1];
 ticket.action="editStory";
 updateStory(ticket);
+//$.put("http://myscrumboard.herokuapp.com/stories/"+ticket.id,{id:id,text:text,color:color,lane:lane});
+$.ajax({
+  url: "http://myscrumboard.herokuapp.com/stories/"+ticket.id,
+  type: 'PUT',
+  dataType: 'jsonp',
+  data: "id="+ticket.id+"&text="+ticket.text+"&color="+ticket.color+"&lane="+ticket.lane,
+  success: function(data) {
+    alert('Load was performed.');
+  }
+});
 //$.post("service.php",{id:id,text:content.current,action:"editStory"});
 }
 
@@ -133,13 +143,14 @@ $(document).ready(setTimeout(function() {
 			var id=ui.item.attr('id');
 			var lane = ui.item.parent().attr('id');
 			ticket = new Object();
-			//$.post("service.php",{id:id,action:"moveStory",lane:lane});
+			
 			ticket.id=id.split('ticket')[1];
 			ticket.text=ui.item.children("p").text();
 			ticket.lane =ui.item.parent().attr('id');
 			ticket.color=ui.item.attr('class').split(' ')[1];
 			ticket.action="moveStory";
 			updateStory(ticket);
+			
 			}
 		}).disableSelection();
 		$(".post-it p").editable({onSubmit:submitStory,type:'textarea'});
