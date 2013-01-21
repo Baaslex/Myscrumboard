@@ -1,5 +1,4 @@
 class BoardsController < ApplicationController
-headers['Access-Control-Allow-Origin'] = "*"
   # GET /boards
   # GET /boards.json
   def index
