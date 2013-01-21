@@ -1,5 +1,4 @@
 class StoriesController < ApplicationController
-headers['Access-Control-Allow-Origin'] = "*"
   # GET /stories
   # GET /stories.json
   def index
