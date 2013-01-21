@@ -55,7 +55,7 @@ ticket.lane =$(this).parent().parent().attr('id');
 ticket.color=$(this).parent().attr('class').split(' ')[-1];
 ticket.action="editStory";
 updateStory(ticket);
-//$.put("http://myscrumboard.herokuapp.com/stories/"+ticket.id,{id:id,text:text,color:color,lane:lane});
+$.post("http://myscrumboard.herokuapp.com/stories/"+ticket.id,{_method:"PUT",id:ticket.id,text:ticket.text,color:ticket.color,lane:ticket.lane});
 $.ajax({
   url: "http://myscrumboard.herokuapp.com/stories/"+ticket.id,
   type: 'PUT',
@@ -65,7 +65,6 @@ $.ajax({
     alert('Load was performed.');
   }
 });
-//$.post("service.php",{id:id,text:content.current,action:"editStory"});
 }
 
 }
