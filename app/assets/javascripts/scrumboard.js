@@ -6,32 +6,39 @@ $.ajaxSetup({
 });
 client.subscribe('/boards/'+gon.boardid, function(message) {
   var obj = $.parseJSON(message.text);
-	if(obj!=null){
-		if($("#ticket"+obj.id).length != 0){
-			$("#ticket"+obj.id+" p").text(obj.text);
-			$("#ticket"+obj.id).appendTo("#"+obj.lane);
-		}
-		else{			 
-			$("#"+obj.lane).append($('<div class="post-it" id="ticket"><div class="window_tools"><span class="ui-icon ui-icon-minusthick">minimize</span><span class="ui-icon ui-icon-plusthick">maximize</span><span class="ui-icon ui-icon-closethick">close</span></div><p>Click to edit</p></div>').addClass(obj.color.toLowerCase()).attr("id","ticket"+obj.id));
-			
-			var newTicket = $("#ticket"+obj.id);
-			alert(JSON.stringify(obj));
+  var destroy = message.destroy;
+  
+  if(destroy){
+	$("#ticket"+obj.id).remove();
+  }
+  else{
+  
+		if(obj!=null){
+			if($("#ticket"+obj.id).length != 0){
+				$("#ticket"+obj.id+" p").text(obj.text);
+				$("#ticket"+obj.id).appendTo("#"+obj.lane);
+			}
+			else{			 
+				$("#"+obj.lane).append($('<div class="post-it" id="ticket"><div class="window_tools"><span class="ui-icon ui-icon-minusthick">minimize</span><span class="ui-icon ui-icon-plusthick">maximize</span><span class="ui-icon ui-icon-closethick">close</span></div><p>Click to edit</p></div>').addClass(obj.color.toLowerCase()).attr("id","ticket"+obj.id));
+				
+				var newTicket = $("#ticket"+obj.id);
 
-			newTicket.children("p").editable({onSubmit:editStory,type:'textarea'});
+				newTicket.children("p").editable({onSubmit:editStory,type:'textarea'});
+				
+				$(".ui-icon-closethick").click(function(e){
+					 var id = $(this).parent().parent().attr('id');
+					 $(this).parent().parent().remove();
+					 deleteStory(id.split('ticket')[1]);
+					//$.post("service.php",{id:id,action:"deletestory"});
+				 });
+				 $(".ui-icon-plusthick").click(function(e){
+					 $(this).parent().parent().animate({'height':"139px"});
+				 });
+				$(".ui-icon-minusthick").click(function(e){
+					 $(this).parent().parent().animate({'height':"16px"});
+				 });
 			
-			$(".ui-icon-closethick").click(function(e){
-				 var id = $(this).parent().parent().attr('id');
-				 $(this).parent().parent().remove();
-				 deleteStory(id.split('ticket')[1]);
-				//$.post("service.php",{id:id,action:"deletestory"});
-			 });
-			 $(".ui-icon-plusthick").click(function(e){
-				 $(this).parent().parent().animate({'height':"139px"});
-			 });
-			$(".ui-icon-minusthick").click(function(e){
-				 $(this).parent().parent().animate({'height':"16px"});
-			 });
-		
+			}
 		}
 	}
 });

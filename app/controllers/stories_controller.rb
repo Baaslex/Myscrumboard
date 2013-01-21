@@ -48,7 +48,7 @@ require 'faye'
     respond_to do |format|
       if @story.save
 	  
-		message = {:channel => "/boards/#{@story.boardid}", :data => { :text=>@story.to_json}}
+		message = {:channel => "/boards/#{@story.boardid}", :data => { :text=>@story.to_json, :destroy=>false.to_json}}
 		uri = URI.parse("http://faye.dev-ice.com/faye")
 		
 		puts(@story.to_json)
@@ -71,10 +71,9 @@ require 'faye'
     respond_to do |format|
       if @story.update_attributes(params[:story])
         
-		message = {:channel => "/boards/#{@story.boardid}", :data => { :text=>@story.to_json}}
+		message = {:channel => "/boards/#{@story.boardid}", :data => { :text=>@story.to_json, :destroy=>false.to_json}}
 		uri = URI.parse("http://faye.dev-ice.com/faye")
 		
-		puts(@story.to_json)
 		Net::HTTP.post_form(uri, :message => message.to_json)
 		
 		format.html { redirect_to @story, notice: 'Story was successfully updated.' }
@@ -90,8 +89,12 @@ require 'faye'
   # DELETE /stories/1.json
   def destroy
     @story = Story.find(params[:id])
-    @story.destroy
-
+    
+	message = {:channel => "/boards/#{@story.boardid}", :data => { :text=>@story.to_json, :destroy=>true.to_json}}
+	uri = URI.parse("http://faye.dev-ice.com/faye")
+		
+	Net::HTTP.post_form(uri, :message => message.to_json)
+	@story.destroy
     respond_to do |format|
       format.html { redirect_to stories_url }
       format.json { head :no_content }
