@@ -8,7 +8,6 @@ gem 'rails', '3.2.1'
 #mysql2 as database connector
 gem 'mysql2'
 gem 'gon'
-gem 'eventmachine'
 gem 'faye'
 gem 'devise'
 # Gems used only for assets and not required
