@@ -22,6 +22,7 @@ client.subscribe('/boards/'+gon.boardid, function(message) {
 			$(".ui-icon-closethick").click(function(e){
 				 var id = $(this).parent().parent().attr('id');
 				 $(this).parent().parent().remove();
+				 deleteStory(id.split('ticket')[1]);
 				//$.post("service.php",{id:id,action:"deletestory"});
 			 });
 			 $(".ui-icon-plusthick").click(function(e){
@@ -59,11 +60,27 @@ if( $target.hasClass('post-it') ) {
     event.preventDefault();  
 }
 }
-function updateStory(ticket){
-client.publish('/boards/'+gon.boardid, {
-  text: JSON.stringify(ticket)
-});
+
+function deleteStory(id){
+			var token = $("meta[name='csrf-token']").attr("content");
+
+		    $.ajax({
+			url: "/stories/"+ id,
+			type: 'post',
+			data: {
+				_method:"DELETE",authenticity_token:token
+			},
+			headers: {
+				"X-CSRF-Token": token  //for object property name, use quoted notation shown in second
+			},
+			success: function( data )
+			{
+				console.info(data);
+			}
+
+		 });
 }
+
 function editStory(content){
 if(content.current!=content.previous){
 var id = this.parent().attr('id');
@@ -192,7 +209,7 @@ $(document).ready(setTimeout(function() {
 		$(".ui-icon-closethick").click(function(e){
 			var id = $(this).parent().parent().attr('id');
 			$(this).parent().parent().remove();
-			$.post("service.php",{id:id,action:"deleteStory"});
+			deleteStory(id.split('ticket')[1]);
 		});
 		$(".ui-icon-plusthick").click(function(e){
 			$(this).parent().parent().animate({'height':"139px"});
