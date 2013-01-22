@@ -10,54 +10,66 @@ client.subscribe('/boards/' + gon.boardid, function (message) {
 
     if (destroy) {
         $("#ticket" + obj.id).remove();
-    }
-    else {
+    } else {
 
         if (obj != null) {
             if ($("#ticket" + obj.id).length != 0) {
                 $("#ticket" + obj.id + " p").text(obj.text);
                 $("#ticket" + obj.id).appendTo("#" + obj.lane);
-            }
-            else {
+            } else {
                 $("#" + obj.lane).append($('<div class="post-it" id="ticket"><div class="window_tools"><span class="ui-icon ui-icon-minusthick">minimize</span><span class="ui-icon ui-icon-plusthick">maximize</span><span class="ui-icon ui-icon-closethick">close</span></div><p>Click to edit</p></div>').addClass(obj.color.toLowerCase()).attr("id", "ticket" + obj.id));
 
                 var newTicket = $("#ticket" + obj.id);
 
-                newTicket.children("p").editable({ onSubmit: editStory, type: 'textarea' });
+                newTicket.children("p").editable({
+                    onSubmit: editStory,
+                    type: 'textarea'
+                });
 
                 $(".ui-icon-closethick").click(function (e) {
                     var id = $(this).parent().parent().attr('id');
                     $(this).parent().parent().remove();
                     deleteStory(id.split('ticket')[1]);
-                    //$.post("service.php",{id:id,action:"deletestory"});
                 });
                 $(".ui-icon-plusthick").click(function (e) {
-                    $(this).parent().parent().animate({ 'height': "139px" });
+                    $(this).parent().parent().animate({
+                        'height': "139px"
+                    });
                 });
                 $(".ui-icon-minusthick").click(function (e) {
-                    $(this).parent().parent().animate({ 'height': "16px" });
+                    $(this).parent().parent().animate({
+                        'height': "16px"
+                    });
                 });
 
             }
         }
     }
 });
+
 function touchHandler(event) {
     var touches = event.changedTouches,
-    first = touches[0],
-    type = "";
+        first = touches[0],
+        type = "";
 
     switch (event.type) {
-        case "touchstart": type = "mousedown"; break;
-        case "touchmove": type = "mousemove"; break;
-        case "touchend": type = "mouseup"; break;
-        default: return;
+        case "touchstart":
+            type = "mousedown";
+            break;
+        case "touchmove":
+            type = "mousemove";
+            break;
+        case "touchend":
+            type = "mouseup";
+            break;
+        default:
+            return;
     }
     var simulatedEvent = document.createEvent("MouseEvent");
     simulatedEvent.initMouseEvent(type, true, true, window, 1,
-                          first.screenX, first.screenY,
-                          first.clientX, first.clientY, false,
-                          false, false, false, 0/*left*/, null);
+    first.screenX, first.screenY,
+    first.clientX, first.clientY, false,
+    false, false, false, 0 /*left*/ , null);
 
     first.target.dispatchEvent(simulatedEvent);
     var $target = $(event.target);
@@ -73,10 +85,11 @@ function deleteStory(id) {
         url: "/stories/" + id,
         type: 'post',
         data: {
-            _method: "DELETE", authenticity_token: token
+            _method: "DELETE",
+            authenticity_token: token
         },
         headers: {
-            "X-CSRF-Token": token  //for object property name, use quoted notation shown in second
+            "X-CSRF-Token": token //for object property name, use quoted notation shown in second
         },
         success: function (data) {
             console.info(data);
@@ -102,10 +115,12 @@ function editStory(content) {
             url: "/stories/" + ticket.id,
             type: 'post',
             data: {
-                _method: "PUT", authenticity_token: token, story: ticket
+                _method: "PUT",
+                authenticity_token: token,
+                story: ticket
             },
             headers: {
-                "X-CSRF-Token": token  //for object property name, use quoted notation shown in second
+                "X-CSRF-Token": token //for object property name, use quoted notation shown in second
             },
             success: function (data) {
                 console.info(data);
@@ -131,10 +146,12 @@ $(document).ready(function () {
             url: "/stories/",
             type: 'post',
             data: {
-                _method: "POST", authenticity_token: token, story: ticket
+                _method: "POST",
+                authenticity_token: token,
+                story: ticket
             },
             headers: {
-                "X-CSRF-Token": token  //for object property name, use quoted notation shown in second
+                "X-CSRF-Token": token //for object property name, use quoted notation shown in second
             },
             success: function (data) {
                 console.info(data);
@@ -154,21 +171,42 @@ $(document).ready(function () {
             ticket.text = ui.item.children("p").text();
             ticket.lane = ui.item.parent().attr('id');
             ticket.color = ui.item.attr('class').split(' ')[1];
-            ticket.action = "moveStory";
-            updateStory(ticket);
+            var token = $("meta[name='csrf-token']").attr("content");
+            $.ajax({
+                url: "/stories/" + ticket.id,
+                type: 'post',
+                data: {
+                    _method: "PUT",
+                    authenticity_token: token,
+                    story: ticket
+                },
+                headers: {
+                    "X-CSRF-Token": token //for object property name, use quoted notation shown in second
+                },
+                success: function (data) {
+                    console.info(data);
+                }
+            });
 
         }
     }).disableSelection();
-    $(".post-it p").editable({ onSubmit: editStory, type: 'textarea' });
+    $(".post-it p").editable({
+        onSubmit: editStory,
+        type: 'textarea'
+    });
     $(".ui-icon-closethick").click(function (e) {
         var id = $(this).parent().parent().attr('id');
         $(this).parent().parent().remove();
         deleteStory(id.split('ticket')[1]);
     });
     $(".ui-icon-plusthick").click(function (e) {
-        $(this).parent().parent().animate({ 'height': "139px" });
+        $(this).parent().parent().animate({
+            'height': "139px"
+        });
     });
     $(".ui-icon-minusthick").click(function (e) {
-        $(this).parent().parent().animate({ 'height': "16px" });
+        $(this).parent().parent().animate({
+            'height': "16px"
+        });
     });
 });
