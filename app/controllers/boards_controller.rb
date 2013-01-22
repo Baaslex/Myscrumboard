@@ -104,13 +104,18 @@ class BoardsController < ApplicationController
   
   def invitecreate
 	@user = User.find_by_email(params[:email])
-	
+	if @user.nil?
+	flash[:notice]="No user with that email exists"
+	else
+	flash[:notice]="User has been added as collaborator"
 	@collaboration = UserCollaboratesOnBoard.new()
 	
 	@collaboration.boardid = params[:boardid]
 	@collaboration.userid = @user.id
 	
 	@collaboration.save
+	end
+	
 	
 	redirect_to boards_url
 	
