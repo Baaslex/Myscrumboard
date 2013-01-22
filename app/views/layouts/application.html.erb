@@ -27,6 +27,12 @@
 					<hr/>
 				</div>
 			</div>
+			<% if flash[:alert] %>
+  <%=flash[:alert]%>
+  <%end%>
+  <% if flash[:notice] %>
+  <%=flash[:notice]%>
+  <%end%>
 			<%= yield %>
 					<div id="footer"><hr />
 		
