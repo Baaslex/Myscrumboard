@@ -6,13 +6,24 @@ Myscrumboard::Application.routes.draw do
 
   get "about/index"
 
+  get "account/index"
+ 
+  get "boards/invite"
+  
+  
   resources :stories
 	devise_for :users, :path => "auth", :path_names => { :sign_in => 'login', :sign_out => 'logout', :password => 'secret', :confirmation => 'verification', :unlock => 'unblock', :registration => 'register', :sign_up => 'cmon_let_me_in' }
   resources :boards
+  
+  post "boards/invitecreate"
+  
   match "/about" => "about#index"
   match "/contact" => "contact#index"
   match "/home" => "home#index"
   match "/user" => "user#index"
+  match "/account" => "account#index"
+  match "/boards/invite/:id" => "boards#invite"
+  match "/boards/invitecreate" => "boards#invitecreate"
   #get "home/index"
 	root :to => "home#index"
   # The priority is based upon order of creation:

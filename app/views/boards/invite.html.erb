@@ -1,0 +1,13 @@
+<h1>Add User To Board</h1>
+
+<%= form_tag("/boards/invitecreate", :method => "post") do %>
+  <%= label_tag(:email, "Email adress:") %>
+  <%= text_field_tag(:email) %>
+  <%= submit_tag("Invite") %>
+  <%= hidden_field_tag(:boardid, @board.id) %>
+<% end %>
+
+<br />
+
+<%= link_to 'New Board', new_board_path %>
+<%= link_to('Logout', destroy_user_session_path, :method => :delete) %>

@@ -2,24 +2,17 @@
 
 <table>
   <tr>
-    <th>Id</th>
-    <th>Ownerid</th>
-    <th>Privacy</th>
     <th>Name</th>
-    <th></th>
-    <th></th>
-    <th></th>
+    <th>Actions</th>
   </tr>
 
 <% @boards.each do |board| %>
   <tr>
-    <td><%= board.id %></td>
-    <td><%= board.ownerid %></td>
-    <td><%= board.privacy %></td>
     <td><%= board.name %></td>
     <td><%= link_to 'Show', board %></td>
     <td><%= link_to 'Edit', edit_board_path(board) %></td>
     <td><%= link_to 'Destroy', board, confirm: 'Are you sure?', method: :delete %></td>
+	<td><%= link_to 'Invite', invite_path(board) %></td>
   </tr>
 <% end %>
 </table>
@@ -27,3 +20,4 @@
 <br />
 
 <%= link_to 'New Board', new_board_path %>
+<%= link_to('Logout', destroy_user_session_path, :method => :delete) %>

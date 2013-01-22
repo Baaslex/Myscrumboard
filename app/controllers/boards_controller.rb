@@ -1,8 +1,14 @@
 class BoardsController < ApplicationController
+	before_filter :authenticate_user!
   # GET /boards
   # GET /boards.json
   def index
-    @boards = Board.all
+	unless user_signed_in?
+		redirect_to "/auth/login"
+		return
+	end
+	
+    @boards = Board.getUserBoards(current_user.id)
 
     respond_to do |format|
       format.html # index.html.erb
@@ -44,6 +50,7 @@ class BoardsController < ApplicationController
   # POST /boards
   # POST /boards.json
   def create
+    params[:board][:ownerid] = current_user.id
     @board = Board.new(params[:board])
 
     respond_to do |format|
@@ -60,6 +67,7 @@ class BoardsController < ApplicationController
   # PUT /boards/1
   # PUT /boards/1.json
   def update
+
     @board = Board.find(params[:id])
 
     respond_to do |format|
@@ -83,5 +91,28 @@ class BoardsController < ApplicationController
       format.html { redirect_to boards_url }
       format.json { head :no_content }
     end
+  end
+  
+  def invite
+	@board = Board.find(params[:id])
+	
+	respond_to do |format|
+      format.html # index.html.erb
+      format.json { render json: @board }
+	end
+  end
+  
+  def invitecreate
+	@user = User.find_by_email(params[:email])
+	
+	@collaboration = UserCollaboratesOnBoard.new()
+	
+	@collaboration.boardid = params[:boardid]
+	@collaboration.userid = @user.id
+	
+	@collaboration.save
+	
+	redirect_to boards_url
+	
   end
 end
