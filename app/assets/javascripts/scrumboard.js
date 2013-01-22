@@ -97,10 +97,7 @@ function editStory(content) {
         ticket.text = content.current;
         ticket.lane = $(this).parent().parent().attr('id');
         ticket.color = $(this).parent().attr('class').split(' ')[1];
-        //updateStory(ticket);
         var token = $("meta[name='csrf-token']").attr("content");
-        //alert(token);
-        //$.post("/stories/"+ticket.id,{_method:"PUT",id:ticket.id,text:ticket.text,color:ticket.color,lane:ticket.lane});
         $.ajax({
             url: "/stories/" + ticket.id,
             type: 'post',
@@ -116,7 +113,7 @@ function editStory(content) {
         });
     }
 }
-$(document).ready(setTimeout(function () {
+$(document).ready(function () {
     document.addEventListener("touchstart", touchHandler, true);
     document.addEventListener("touchmove", touchHandler, true);
     document.addEventListener("touchend", touchHandler, true);
@@ -125,9 +122,6 @@ $(document).ready(setTimeout(function () {
         var id = gon.boardid;
         var color = $("#colorselect").val();
         var token = $("meta[name='csrf-token']").attr("content");
-        // $.post("service.php",{scrumboardid:id,color:color,action:"addstory"},function(data) {
-        // $("#take-off").append($('<div class="post-it" id="ticket"><div class="window_tools"><span class="ui-icon ui-icon-minusthick">minimize</span><span class="ui-icon ui-icon-plusthick">maximize</span><span class="ui-icon ui-icon-closethick">close</span></div><p>click to edit</p></div>').addclass(color.tolowercase()).attr("id","ticket"+data));
-
         var ticket = new Object();
         ticket.boardid = id;
         ticket.color = color.toLowerCase();
@@ -177,5 +171,4 @@ $(document).ready(setTimeout(function () {
     $(".ui-icon-minusthick").click(function (e) {
         $(this).parent().parent().animate({ 'height': "16px" });
     });
-    longpoll();
-}, 1000));
+});
