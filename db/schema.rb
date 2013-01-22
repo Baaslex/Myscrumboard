@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130121220600) do
+ActiveRecord::Schema.define(:version => 20130122143613) do
 
   create_table "boards", :force => true do |t|
     t.integer  "ownerid"
@@ -27,6 +27,13 @@ ActiveRecord::Schema.define(:version => 20130121220600) do
     t.string   "lane"
     t.string   "color"
     t.integer  "lastmodif"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  create_table "user_collaborates_on_boards", :force => true do |t|
+    t.integer  "userid"
+    t.integer  "boardid"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end

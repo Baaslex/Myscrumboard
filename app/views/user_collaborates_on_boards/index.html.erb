@@ -1,0 +1,25 @@
+<h1>Listing user_collaborates_on_boards</h1>
+
+<table>
+  <tr>
+    <th>Userid</th>
+    <th>Boardid</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @user_collaborates_on_boards.each do |user_collaborates_on_board| %>
+  <tr>
+    <td><%= user_collaborates_on_board.userid %></td>
+    <td><%= user_collaborates_on_board.boardid %></td>
+    <td><%= link_to 'Show', user_collaborates_on_board %></td>
+    <td><%= link_to 'Edit', edit_user_collaborates_on_board_path(user_collaborates_on_board) %></td>
+    <td><%= link_to 'Destroy', user_collaborates_on_board, confirm: 'Are you sure?', method: :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New User collaborates on board', new_user_collaborates_on_board_path %>

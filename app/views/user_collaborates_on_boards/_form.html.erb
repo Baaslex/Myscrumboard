@@ -1,0 +1,25 @@
+<%= form_for(@user_collaborates_on_board) do |f| %>
+  <% if @user_collaborates_on_board.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@user_collaborates_on_board.errors.count, "error") %> prohibited this user_collaborates_on_board from being saved:</h2>
+
+      <ul>
+      <% @user_collaborates_on_board.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :userid %><br />
+    <%= f.number_field :userid %>
+  </div>
+  <div class="field">
+    <%= f.label :boardid %><br />
+    <%= f.number_field :boardid %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

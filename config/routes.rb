@@ -1,5 +1,7 @@
 Myscrumboard::Application.routes.draw do
 
+  resources :user_collaborates_on_boards
+
   get "contact/index"
 
   get "about/index"
